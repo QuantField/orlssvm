@@ -1,10 +1,4 @@
 
-"""
-Fast regularisation LSSVM
-part of my PhD work
-@author: Dr Kamel Saadi
-date 15/12/2017
-"""
 import numpy as np
 import numpy.linalg as al
 import matplotlib.pyplot as plt
