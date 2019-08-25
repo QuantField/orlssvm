@@ -85,7 +85,7 @@ class RBF(Kernel):
         return np.exp(-K / w).T
 
     def params(self):
-        return 'RBF Width = ' + str(self.__width)
+        return 'RBF Width = ' + str(self.__width)[:6]
 
 
 class lssvm:
