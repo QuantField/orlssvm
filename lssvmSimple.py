@@ -1,6 +1,5 @@
 
 import numpy as np
-import numpy.linalg as al
 import matplotlib.pyplot as plt
 import abc
 import copy
