@@ -7,7 +7,7 @@ This is a fast tuned  Least Squares Support Vector Machines (LSSVM), the cost of
 
 
 ## Classification 
-Banana dataset, n = 5300, only 10% (530) is using in the training.
+Banana dataset, n = 5300, only 10% (530) is used in the training.
 ![Screenshot](initMod.png)
 
 ![Screenshot](optimReg.png)
