@@ -1,5 +1,5 @@
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class Kernel(ABC):
 
@@ -11,13 +11,13 @@ class Kernel(ABC):
         else:
             print("invalid Kernel, only  LINEAR,POLYNOMIAL,RBF are allowed")
 
-    @abc.abstractmethod
+    @abstractmethod
     def params(self):
         return self._type
 
     def __str__(self):
         return self.params()
 
-    @abc.abstractmethod
+    @abstractmethod
     def evaluate(self, x1, x2):
         return
