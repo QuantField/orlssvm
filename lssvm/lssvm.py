@@ -1,12 +1,12 @@
 import numpy as np
-import kernels as kern
+from  kernels.rbf import RBF
 import copy
 
 class lssvm:
 
     muArray = np.logspace(-3, 2, 50)
 
-    def __init__(self, kern = kern.RBF(), mu=0.1):
+    def __init__(self, kern = RBF(), mu=0.1):
         self.alpha = None
         self.ntp = 0.0
         self.bias = 0.0
@@ -97,14 +97,14 @@ class lssvm:
         self.ntp = len(y)
 
     def fullyOptimRBF(self):
-        kn = kern.RBF()
+        kn = RBF()
         kn.setInitWidh(self.x)
         sig = kn.getWidth()
         sigma = (10 ** np.arange(-3, 2.25, 0.25)) * sig
         muX = np.zeros(len(sigma))
         pressX = np.zeros(len(sigma))
         for i in range(len(sigma)):
-            ls = lssvm(kern.RBF(sigma[i]))
+            ls = lssvm(RBF(sigma[i]))
             ls.setXY(self.x, self.y)
             muX[i], pressX[i] = ls.get_optim_regparam()
             print("Width = %4.4f  Mu =%4.4f  PRESS=%8.4f" %
@@ -113,7 +113,7 @@ class lssvm:
         sigOpt = sigma[pressX.argmin()]
         print("Optimal Parameters: RBF Width =%4.6f, Regular Param =%4.6f" %
               (sigOpt, muOpt))
-        netOpt = lssvm(kern.RBF(sigOpt), muOpt)
+        netOpt = lssvm(RBF(sigOpt), muOpt)
         print("training with opt parameters...")
         netOpt.fit(self.x, self.y)
         return netOpt
