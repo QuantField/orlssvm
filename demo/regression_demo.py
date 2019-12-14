@@ -27,7 +27,10 @@ def regression():
 
     print("\nfinding best regularisation parameter, initial RBF width fixed ")
     print("optimalRegularisation")
-    net.optim_refit()
+    mu, _ = net.optim_reg_param(x.reshape(-1, 1), y)
+    net.mu = mu
+    net.fit(x.reshape(-1, 1), y)
+
     print(net.mu)
     plt.subplot(312)
     plt.plot(x, y, '.', label='Train')
@@ -38,7 +41,7 @@ def regression():
     #plt.show()
 
     print("\nfull optimisation RBF width and regularisation parameter")
-    net = net.fullyOptimRBF()
+    net = net.fullyOptimRBF(x.reshape(-1,1),y)
     plt.subplot(313)
     plt.plot(x, y, '.', label='Train')
     plt.plot(x, y0, 'k--', label='Exact')

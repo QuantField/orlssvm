@@ -66,9 +66,8 @@ class lssvm:
         return looResid, press
 
     # finds optimal regularisation parameter
-    def get_optim_regparam(self, Mu=muArray):
-        y = self.y
-        eigVal, V = np.linalg.eigh(self.kernel.evaluate(self.x, self.x))
+    def optim_reg_param(self, x, y, Mu=muArray):
+        eigVal, V = np.linalg.eigh(self.kernel.evaluate(x, x))
         Vt_y = V.T.dot(y)
         Vt_sqr = V.T ** 2
         xi = (V.sum(axis=0)).T
@@ -86,17 +85,7 @@ class lssvm:
             # print("Mu= %2.4f  PRESS=%f"%(Mu[i],PRESS[i]))
         return Mu[PRESS.argmin()], min(PRESS)
 
-    def optim_refit(self):
-        print("tuning optimal regularisation parameter...")
-        self.mu = self.get_optim_regparam()[0]
-        self.fit(self.x, self.y)
-
-    def setXY(self, x, y):
-        self.x = x
-        self.y = y
-        self.ntp = len(y)
-
-    def fullyOptimRBF(self):
+    def fullyOptimRBF(self,x, y):
         kn = RBF()
         kn.setInitWidh(self.x)
         sig = kn.getWidth()
@@ -105,8 +94,7 @@ class lssvm:
         pressX = np.zeros(len(sigma))
         for i in range(len(sigma)):
             ls = lssvm(RBF(sigma[i]))
-            ls.setXY(self.x, self.y)
-            muX[i], pressX[i] = ls.get_optim_regparam()
+            muX[i], pressX[i] = ls.optim_reg_param(x, y)
             print("Width = %4.4f  Mu =%4.4f  PRESS=%8.4f" %
                   (sigma[i], muX[i], pressX[i]))
         muOpt = muX[pressX.argmin()]

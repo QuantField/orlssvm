@@ -46,11 +46,13 @@ def bin_class():
     yhat = net.predict(s)
     plot_contour(yhat, "Initial model: " + net.__str__(), "initMod")
 
-    net.optim_refit()
+    mu, _ = net.optim_reg_param(X_train.values, y_train.values)
+    net.mu = mu
+    net.fit(X_train.values, y_train.values)
     yhat = net.predict(s)
     plot_contour(yhat, "Optim Regularised Model: " + net.__str__(), "optimReg")
 
-    net = net.fullyOptimRBF()
+    net = net.fullyOptimRBF(X_train.values, y_train.values)
     yhat = net.predict(s)
     plot_contour(yhat, "Full optimised Model: " + net.__str__(), "fullyoptm")
 
