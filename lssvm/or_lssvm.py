@@ -5,7 +5,8 @@ class or_lssvm(lssvm):
 
     muArray = np.logspace(-3, 2, 50)
 
-    def optimise(self, x, y, Mu=muArray):
+
+    def _optimise(self, x, y, Mu=muArray, echo=True):
         self.x = x
         self.y = y
         eigVal, V = np.linalg.eigh(self.kernel.evaluate(x, x))
@@ -23,7 +24,14 @@ class or_lssvm(lssvm):
             f = V.dot(eigVal * theta) - sum(u * Vt_y) / sm
             loo_resid = (y - f) / (1 - h)
             PRESS[i] = (loo_resid ** 2).sum()
-            print("Mu= %2.4f  PRESS=%f"%(Mu[i],PRESS[i]))
+            if echo:
+                print("Mu= %2.4f  PRESS=%f"%(Mu[i],PRESS[i]))
         return Mu[PRESS.argmin()], min(PRESS)
+
+    def fit(self, x, y, Mu=muArray):
+        mu, press = self._optimise(x,y)
+        self.mu = mu
+        super().fit(x,y)
+
 
 

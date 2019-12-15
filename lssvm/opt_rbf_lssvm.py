@@ -8,7 +8,7 @@ class opt_rbf_lssvm(or_lssvm):
         super().__init__(RBF())
 
 
-    def optimise(self, x, y):
+    def fit(self, x, y):
         self.x = x
         self.y = y
         kern = self.kernel
@@ -19,7 +19,7 @@ class opt_rbf_lssvm(or_lssvm):
         pressX = np.zeros(len(sigma))
         for i in range(len(sigma)):
             ls = or_lssvm(RBF(sigma[i]))
-            muX[i], pressX[i] = ls.optimise(x, y)
+            muX[i], pressX[i] = ls._optimise(x, y, echo=False)
             print("Width = %4.4f  Mu =%4.4f  PRESS=%8.4f" %
                   (sigma[i], muX[i], pressX[i]))
         muOpt = muX[pressX.argmin()]
@@ -28,8 +28,8 @@ class opt_rbf_lssvm(or_lssvm):
               (sigOpt, muOpt))
         self.kernel, self.mu = RBF(sigOpt),  muOpt
         print("training with opt parameters...")
-        self.fit(self.x, self.y)
-        #return netOpt
+        super(or_lssvm, self).fit(self.x, self.y)
+
 
 
 

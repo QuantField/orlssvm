@@ -15,6 +15,7 @@ class lssvm:
         self.mu = mu
         self.kernel = kern
 
+
     def copy(self):
         return copy.deepcopy(self)
 
@@ -68,47 +69,8 @@ class lssvm:
         loo=self.loo_residuals()
         return loo.dot(loo)
 
-    # finds optimal regularisation parameter
-    def optim_reg_param(self, x, y, Mu=muArray):
-        eigVal, V = np.linalg.eigh(self.kernel.evaluate(x, x))
-        Vt_y = V.T.dot(y)
-        Vt_sqr = V.T ** 2
-        xi = (V.sum(axis=0)).T
-        xi2 = xi ** 2
-        PRESS = np.zeros(len(Mu))
-        for i in range(len(Mu)):
-            u = xi / (eigVal + Mu[i])
-            g = eigVal / (eigVal + Mu[i])
-            sm = -(xi2 / (eigVal + Mu[i])).sum()
-            theta = Vt_y / (eigVal + Mu[i]) + (u.dot(Vt_y) / sm) * u
-            h = Vt_sqr.T.dot(g) + (V.dot(u * eigVal) - 1) * (V.dot(u)) / sm
-            f = V.dot(eigVal * theta) - sum(u * Vt_y) / sm
-            loo_resid = (y - f) / (1 - h)
-            PRESS[i] = (loo_resid ** 2).sum()
-            # print("Mu= %2.4f  PRESS=%f"%(Mu[i],PRESS[i]))
-        return Mu[PRESS.argmin()], min(PRESS)
-
-    def fullyOptimRBF(self,x, y):
-        kn = RBF()
-        kn.setInitWidh(self.x)
-        sig = kn.getWidth()
-        sigma = (10 ** np.arange(-3, 2.25, 0.25)) * sig
-        muX = np.zeros(len(sigma))
-        pressX = np.zeros(len(sigma))
-        for i in range(len(sigma)):
-            ls = lssvm(RBF(sigma[i]))
-            muX[i], pressX[i] = ls.optim_reg_param(x, y)
-            print("Width = %4.4f  Mu =%4.4f  PRESS=%8.4f" %
-                  (sigma[i], muX[i], pressX[i]))
-        muOpt = muX[pressX.argmin()]
-        sigOpt = sigma[pressX.argmin()]
-        print("Optimal Parameters: RBF Width =%4.6f, Regular Param =%4.6f" %
-              (sigOpt, muOpt))
-        netOpt = lssvm(RBF(sigOpt), muOpt)
-        print("training with opt parameters...")
-        netOpt.fit(self.x, self.y)
-        return netOpt
 
     def __str__(self):
-        return self.kernel.__str__() + "  Regularisation parameter = " + \
-               str(self.mu)[:6]
+           return self.kernel.__str__() + \
+                  "  Regularisation parameter = " + \
+                  str(self.mu)[:6]
