@@ -7,7 +7,6 @@ class opt_rbf_lssvm(or_lssvm):
     def __init__(self):
         super().__init__(RBF())
 
-
     def fit(self, x, y):
         self.x = x
         self.y = y

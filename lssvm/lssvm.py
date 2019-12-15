@@ -4,8 +4,6 @@ import copy
 
 class lssvm:
 
-    muArray = np.logspace(-3, 2, 50)
-
     def __init__(self, kern = RBF(), mu=0.1):
         self.alpha = None
         self.ntp = 0.0
@@ -14,10 +12,6 @@ class lssvm:
         self.y = None
         self.mu = mu
         self.kernel = kern
-
-
-    def copy(self):
-        return copy.deepcopy(self)
 
     def fit(self, x, y):
         n = len(y)
@@ -68,7 +62,6 @@ class lssvm:
     def PRESS(self):
         loo=self.loo_residuals()
         return loo.dot(loo)
-
 
     def __str__(self):
            return self.kernel.__str__() + \

@@ -5,7 +5,6 @@ class or_lssvm(lssvm):
 
     muArray = np.logspace(-3, 2, 50)
 
-
     def _optimise(self, x, y, Mu=muArray, echo=True):
         self.x = x
         self.y = y
