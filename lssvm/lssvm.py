@@ -14,7 +14,6 @@ class lssvm:
         self.y = None
         self.mu = mu
         self.kernel = kern
-        self.yhat = None
 
     def copy(self):
         return copy.deepcopy(self)
@@ -50,20 +49,24 @@ class lssvm:
     def loo_residuals(self):
         """
         Caluculate Leave One Out residuals
-        (y - yhat)/(1-diag(H))
-        :return:  tupele (looResid : Leave One Out residuals,
-                          press    : PRESS statistic)
+        loo_resid = (y - yhat)/(1-diag(H))
+        PRESS can be calculated as loo_resid.dot(loo_resid)
+        :return:  loo_resid : Leave One Out residuals,
         """
         n = self.ntp
         K = self.kernel.evaluate(self.x, self.x)
+        yhat = (K.T).dot(self.alpha) + self.bias
         T = np.ones([n + 1, n + 1])
         T[n][n] = 0.0
         T[:n, :n] = K + self.mu * np.eye(n)
-        H = np.concatenate((K, np.ones([n, 1])), axis=1)\
-            .dot(np.linalg.inv(T))
-        looResid = (self.y - self.yhat) / (1 - H.diagonal())
-        press = (looResid ** 2).sum()
-        return looResid, press
+        H = np.concatenate((K, np.ones([n, 1])), axis=1).dot(np.linalg.inv(T))
+        loo_resid = (self.y - yhat) / (1 - H.diagonal())
+        press = (loo_resid ** 2).sum()
+        return loo_resid
+
+    def PRESS(self):
+        loo=self.loo_residuals()
+        return loo.dot(loo)
 
     # finds optimal regularisation parameter
     def optim_reg_param(self, x, y, Mu=muArray):
