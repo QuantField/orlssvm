@@ -20,4 +20,4 @@ class Kernel(ABC):
 
     @abstractmethod
     def evaluate(self, x1, x2):
-        return
+       pass
