@@ -56,12 +56,16 @@ class lssvm:
         T[:n, :n] = K + self.mu * np.eye(n)
         H = np.concatenate((K, np.ones([n, 1])), axis=1).dot(np.linalg.inv(T))
         loo_resid = (self.y - yhat) / (1 - H.diagonal())
-        press = (loo_resid ** 2).sum()
         return loo_resid
 
-    def PRESS(self):
-        loo=self.loo_residuals()
-        return loo.dot(loo)
+    def press(self):
+        loo_resid=self.loo_residuals()
+        return loo_resid.dot(loo_resid)
+
+    def loo_error(self):
+        # for this to work correctly y must be in {-1,1}
+        loo_resid = self.loo_residuals()
+        return np.mean(self.y*loo_resid-1>0)
 
     def __str__(self):
            return self.kernel.__str__() + \
