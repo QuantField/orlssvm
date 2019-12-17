@@ -18,7 +18,7 @@ class or_lssvm(lssvm):
         """
         super().__init__(kern)
         if mu_values is None:
-            self._mu_values = np.logspace(-3, 2, 50)
+            self._mu_values = np.logspace(-3, 2, 20)
         else:
             self._mu_values = mu_values
 
