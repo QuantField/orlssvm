@@ -2,7 +2,7 @@ from .kernel import Kernel
 
 class Polynomial(Kernel):
     def __init__(self, order, ofset):
-        super(Polynomial, self).__init__('Polynomial')
+        super().__init__('Polynomial')
         self.__order = order
         self.__ofset = ofset
 

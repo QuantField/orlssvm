@@ -4,7 +4,7 @@ import numpy as np
 class RBF(Kernel):
 
     def __init__(self, sigma=0.5):
-        super(RBF, self).__init__('RBF')
+        super().__init__('RBF')
         self.__width = sigma
         self.__type = 'RBF'
 
@@ -34,8 +34,7 @@ class RBF(Kernel):
         """
         n1 = x1.shape[0]
         n2 = x2.shape[0]
-        p = (x1 ** 2).sum(axis=1)
-        p.shape = (n1, 1)
+        p = (x1 ** 2).sum(axis=1).reshape(-1,1)
         par1 = p.dot(np.ones([1, n2]))
         if (x1 is x2):
             par2 = par1.T
