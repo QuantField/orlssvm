@@ -14,7 +14,7 @@ class or_lssvm(lssvm):
         """or_lssvm constructor.
 
         :param kern: Kernel
-        :param mu_values: range of regularisation parameters values
+        :param mu_values: range of regularisation parameter values
         """
         super().__init__(kern)
         if mu_values is None:
@@ -41,12 +41,13 @@ class or_lssvm(lssvm):
         mu_vals = self.mu_values
         PRESS = np.zeros(len(mu_vals))
         for i in range(len(mu_vals)):
-            u = xi / (eigVal + mu_vals[i])
-            g = eigVal / (eigVal + mu_vals[i])
-            sm = -(xi2 / (eigVal + mu_vals[i])).sum()
-            theta = Vt_y / (eigVal + mu_vals[i]) + (u.dot(Vt_y) / sm) * u
-            h = Vt_sqr.T.dot(g) + (V.dot(u * eigVal) - 1) * (V.dot(u)) / sm
-            f = V.dot(eigVal * theta) - sum(u * Vt_y) / sm
+            denom = eigVal + mu_vals[i]
+            u = xi/denom
+            g = eigVal/denom
+            sm = -(xi2/denom).sum()
+            theta = Vt_y/denom + (u.dot(Vt_y)/sm)*u
+            h = Vt_sqr.T.dot(g) + (V.dot(u*eigVal)-1)*V.dot(u)/sm
+            f = V.dot(eigVal*theta) - sum(u*Vt_y)/sm
             loo_resid = (y - f) / (1 - h)
             PRESS[i] = (loo_resid ** 2).sum()
             if echo:

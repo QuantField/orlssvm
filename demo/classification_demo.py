@@ -1,79 +1,60 @@
-import matplotlib.pyplot as plt
-import numpy as np
+from demo.util.grid_data_visual import GridDataVisual
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from lssvm.lssvm import lssvm
-from lssvm.or_lssvm import or_lssvm
-from lssvm.opt_rbf_lssvm import opt_rbf_lssvm
-from kernels.rbf import RBF
-
-# loading banana dataset
-df = pd.read_csv("../data/banana.csv")
-# binary classification, target/(class label) in LSSVM is in {-1,1}
-df.loc[df['Class']==1,'Class'] = -1
-df.loc[df['Class']==2,'Class'] = 1
-#------------------------
-target = df.pop('Class')
-#------------------------
-
-pos = df[target.values > 0]
-neg = df[target.values < 0]
-
-#--- for graphing purpose
-def meshgrid_2d_test_data(df, var1, var2, target):
-    n_grid_points = 50
-    v1_min, v1_max = df[var1].min(), df[var1].max()
-    v2_min, v2_max = df[var2].min(), df[var2].max()
-    v1, v2 = np.meshgrid(np.linspace(v1_min, v1_max, n_grid_points),
-                         np.linspace(v2_min, v2_max, n_grid_points))
-    s = np.stack( [v1.reshape(-1, 1).flatten(),
-                   v2.reshape(-1, 1).flatten()], axis=1)
-    return s, v1, v2
+from lssvm import *
+from kernels import RBF
 
 
-def plot_contour(yhat,v1,v2, title, imageName=None):
-    z = yhat.reshape(v1.shape[0], v2.shape[0])
-    # fig, ax = plt.subplots(constrained_layout=True)
-    # CS = ax2.contourf(X, Y, Z, 10, cmap=plt.cm.bone, origin=origin)
-    fig, ax = plt.subplots(1, 1,figsize=(10,9))
-    cp = ax.contourf(v1, v2, z,cmap=plt.cm.bone)
-    #ax.contourf(cp, colors='k')
-    fig.colorbar(cp)
-    ax.set_title(title,fontsize=10)
-    plt.plot(pos['V1'], pos['V2'], 'r.',label='Class +1')
-    plt.plot(neg['V1'], neg['V2'], 'g.',label='Class -1')
-    plt.legend()
-    #plt.show()
-    if imageName:
-        plt.savefig(imageName)
+def run_lssvm(X_train,y_train, gridtest ):
+    print("LSSVM:")
+    net = lssvm(RBF(0.1), mu=0.1)
+    # training
+    net.fit(X_train.values, y_train.values)
+    # scoring
+    yhat = net.predict(gridtest.xy_grid)
+    gridtest.plot_contour(yhat, "Initial model: " + net.__str__(), "initMod")
+
+def run_optimally_regularised_lssvm(X_train,y_train, gridtest):
+    print("\n Optimally Regularisded LSSVM")
+    net = or_lssvm(RBF(0.1))
+    net.fit(X_train.values, y_train.values)
+    yhat = net.predict(gridtest.xy_grid)
+    gridtest.plot_contour(yhat, "Optimally regularised model: " + net.__str__(),
+                          "optReg")
+
+def run_fully_optimised_lssvm(X_train,y_train, gridtest):
+    print("\n Optimal RBF LSSVM, both RBF width and regularisation parameter are\
+    are optimised")
+    net = opt_rbf_lssvm()
+    net.fit(X_train.values, y_train.values)
+    yhat = net.predict(gridtest.xy_grid)
+    gridtest.plot_contour(yhat, "Fully optimised model: " + net.__str__(),
+                          "fullOpt")
 
 
-xplan, v1, v2  = meshgrid_2d_test_data(df,'V1','V2', target)
+if __name__ == '__main__':
 
+    # ----------------------- loading banana dataset ---------------------------
+    # Consists of two variables V1 and V2, and a target Class
+    #
+    df = pd.read_csv("../data/banana.csv")
+    # binary classification, target/(class label) in LSSVM is in {-1,1}
+    df.loc[df['Class'] == 1, 'Class'] = -1
+    df.loc[df['Class'] == 2, 'Class'] = 1
+    # --------------------------------------------------------------------------
+    target = df.pop('Class')
 
-X_train, X_test, y_train, y_test = train_test_split(df, target,
-                                                    test_size=0.90,
-                                                    random_state=42)
-print("LSSVM:")
-net = lssvm(RBF(0.1), mu=0.1)
-# training
-net.fit(X_train.values, y_train.values)
-# scoring
-yhat = net.predict(xplan)
-plot_contour(yhat, v1,v2, "Initial model: " + net.__str__(), "initMod")
+    # 2D mesh grid creation for visualisation
+    gridtest = GridDataVisual(df, 'V1', 'V2', target)
 
-print("\n Optimally Regularisded LSSVM")
-net = or_lssvm(net.kernel)
-net.fit(X_train.values, y_train.values)
-yhat = net.predict(xplan)
-plot_contour(yhat, v1,v2, "Initial model: " + net.__str__(), "optReg")
+    # train/test split, only 10% of the data is used for training, 530
+    # datapoints
+    # no need for testing points as the whole 2d plan is used for testing, see
+    # gridtest object
+    X_train, _ , y_train, _ = train_test_split(df, target,test_size=0.90,
+                                                          random_state=42)
+    run_lssvm(X_train, y_train, gridtest)
+    run_optimally_regularised_lssvm(X_train, y_train, gridtest)
+    run_fully_optimised_lssvm(X_train, y_train, gridtest)
 
-print("\n Optimal RBF LSSVM, both RBF width and regularisation parameter are\
-are optimised")
-net = opt_rbf_lssvm()
-net.fit(X_train.values, y_train.values)
-yhat = net.predict(xplan)
-plot_contour(yhat, v1,v2, "Initial model: " + net.__str__(), "fullOpt")
-
-
-plt.show()
+    gridtest.plt_show()
