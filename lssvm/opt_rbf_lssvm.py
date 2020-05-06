@@ -1,5 +1,5 @@
 from .or_lssvm import or_lssvm
-from kernels.rbf import RBF
+from kernels import RBF
 import numpy as np
 
 class opt_rbf_lssvm(or_lssvm):
@@ -44,12 +44,13 @@ class opt_rbf_lssvm(or_lssvm):
             xi2 = xi ** 2
             PRESS = np.zeros(len(mu_vals))
             for i in range(len(mu_vals)):
-                u = xi / (eigVal + mu_vals[i])
-                g = eigVal / (eigVal + mu_vals[i])
-                sm = -(xi2 / (eigVal + mu_vals[i])).sum()
-                theta = Vt_y / (eigVal + mu_vals[i]) + (u.dot(Vt_y) / sm) * u
-                h = Vt_sqr.T.dot(g) + (V.dot(u * eigVal) - 1) * (V.dot(u)) / sm
-                f = V.dot(eigVal * theta) - sum(u * Vt_y) / sm
+                denom = eigVal + mu_vals[i]
+                u = xi/denom
+                g = eigVal/denom
+                sm = -(xi2 /denom).sum()
+                theta = Vt_y/denom + (u.dot(Vt_y)/sm)*u
+                h = Vt_sqr.T.dot(g) + (V.dot(u*eigVal)-1)*V.dot(u)/sm
+                f = V.dot(eigVal*theta) - sum(u*Vt_y)/ sm
                 loo_resid = (y - f) / (1 - h)
                 PRESS[i] = (loo_resid ** 2).sum()
             muX[k] = mu_vals[PRESS.argmin()]

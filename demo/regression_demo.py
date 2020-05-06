@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from lssvm.lssvm import lssvm
-from lssvm.or_lssvm import or_lssvm
-from lssvm.opt_rbf_lssvm import opt_rbf_lssvm
-from kernels.rbf import RBF
+from lssvm import *
+from kernels import RBF
 
 x0 = np.linspace(-10, 10, 200)
 y0 = np.sin(x0) / x0

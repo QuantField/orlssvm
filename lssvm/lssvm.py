@@ -1,5 +1,5 @@
 import numpy as np
-from  kernels.rbf import RBF
+from kernels import RBF
 import copy
 
 class lssvm:
