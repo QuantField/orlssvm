@@ -7,3 +7,7 @@ class Linear(Kernel):
 
     def evaluate(self, x1, x2):
         return x2.dot(x1.T)
+
+    def __repr__(self):
+        return "Linear()"
+        

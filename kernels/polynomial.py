@@ -10,5 +10,9 @@ class Polynomial(Kernel):
         return (x2.dot(x1.T) + self.__ofset) ** self.__order
 
     def params(self):
-        s = "Order = " + str(self.__order) + "   Ofset = " + str(self.__ofset)
+        s = "Order = " + str(self.__order) + "   Offset = " + str(self.__ofset)
         return s
+
+    def __repr__(self):
+        return ("Polynomial(order= {}, offset= {})".format( self.__order,
+            self.__ofset))

@@ -56,4 +56,8 @@ class RBF(Kernel):
         return np.exp(-K / w).T
 
     def params(self):
-        return 'RBF Width = ' + str(self.__width)[:6]
+        return 'RBF Width = ' + str(self.__width)[:6] 
+
+    def __repr__(self):
+        return "RBF( width = {})".format(self.__width)
+            

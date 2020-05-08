@@ -1,6 +1,7 @@
-from demo.util.grid_data_visual import GridDataVisual
+import sys
+sys.path.append('../')
+from demo.util import GridDataVisual, train_test_split
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from lssvm import *
 from kernels import RBF
 
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     # datapoints
     # no need for testing points as the whole 2d plan is used for testing, see
     # gridtest object
-    X_train, _ , y_train, _ = train_test_split(df, target,test_size=0.90,
+    X_train, _ , y_train, _ = train_test_split(df, target,train_frac=0.10,
                                                           random_state=42)
     run_lssvm(X_train, y_train, gridtest)
     run_optimally_regularised_lssvm(X_train, y_train, gridtest)

@@ -14,9 +14,7 @@ class Kernel(ABC):
     @abstractmethod
     def params(self):
         return self._type
-
-    def __str__(self):
-        return self.params()
+    
 
     @abstractmethod
     def evaluate(self, x1, x2):
