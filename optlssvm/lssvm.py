@@ -1,9 +1,9 @@
 import numpy as np
-from kernels import RBF
-import copy
+from optlssvm.kernels import RBF
+from dataclasses import dataclass
 
-class lssvm:
 
+class LSSVM:
     def __init__(self, kern = RBF(), mu=0.1):
         self.alpha = None
         self.ntp = 0.0
@@ -67,7 +67,4 @@ class lssvm:
         loo_resid = self.loo_residuals()
         return np.mean(self.y*loo_resid-1>0)
 
-    def __str__(self):
-           return self.kernel.__str__() + \
-                  "  Regularisation parameter = " + \
-                  str(self.mu)[:6]
+

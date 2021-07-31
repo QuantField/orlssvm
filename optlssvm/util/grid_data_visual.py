@@ -36,7 +36,7 @@ class GridDataVisual:
                             self.y_grid.reshape(-1, 1).flatten()], axis=1)
         return xy_grid
 
-    def plot_contour(self, yhat, title, imageName=None):
+    def plot_contour(self, yhat, title, image_name= None):
         z = yhat.reshape(self.x_grid.shape[0], self.y_grid.shape[0])
         # fig, ax = plt.subplots(constrained_layout=True)
         # CS = ax2.contourf(X, Y, Z, 10, cmap=plt.cm.bone, origin=origin)
@@ -49,8 +49,8 @@ class GridDataVisual:
         plt.plot(self.neg[self.x], self.neg[self.y], 'g.', label='Class -1')
         plt.legend()
         # plt.show()
-        if imageName:
-            plt.savefig(imageName)
+        if image_name:
+            plt.savefig(image_name)
 
     @staticmethod
     def plt_show():

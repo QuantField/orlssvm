@@ -1,7 +1,7 @@
-from .lssvm import lssvm
+from optlssvm.lssvm import LSSVM
 import numpy as np
 
-class or_lssvm(lssvm):
+class OptimallyRegularizedLSSVM(LSSVM):
     """Optimal Regularistion of LSSVM.
 
     The regularisation parameter mu is tuned as to minimise the PRESS statistic

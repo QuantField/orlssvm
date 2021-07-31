@@ -1,6 +1,8 @@
+import sys
+sys.path.append('../')
 import numpy as np
 import pandas as pd
-from lssvm.lssvm import lssvm
+from optlssvm.lssvm import LSSVM
 
 ZERO = 1.0E-8
 # loading banana dataset
@@ -12,7 +14,7 @@ df.loc[df['Class']==1,'Class'] = -1
 df.loc[df['Class']==2,'Class'] = 1
 
 # calculating via the conventional way
-net = lssvm()
+net = LSSVM()
 all = list(range(n))
 loo_residuals = np.zeros([n,1])
 loo_error     = np.zeros([n,1])

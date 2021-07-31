@@ -1,8 +1,12 @@
-from .or_lssvm import or_lssvm
-from kernels import RBF
+# import sys 
+# sys.path.append('../')
+# sys.path.append('../../')
+
+from optlssvm.orlssvm import OptimallyRegularizedLSSVM
+from optlssvm.kernels import RBF
 import numpy as np
 
-class opt_rbf_lssvm(or_lssvm):
+class OptimallyRegularizedRBFLSSVM(OptimallyRegularizedLSSVM):
 
     def __init__(self,  rbf_width_values = None ):
         super().__init__(RBF()) # kernel must be RBF
@@ -23,7 +27,7 @@ class opt_rbf_lssvm(or_lssvm):
 
     # big chunk of code is from the parent class, copied here just to make
     # the RBF calculation more efficient
-    def _optimise(self, x, y):
+    def _optimise(self, x: np.array, y: np.array)-> None:
         self.x = x
         self.y = y
         dist = self.kernel.squared_distance(x,x)
@@ -56,19 +60,20 @@ class opt_rbf_lssvm(or_lssvm):
             muX[k] = mu_vals[PRESS.argmin()]
             pressX[k] = min(PRESS)
             print("Width = %4.4f  Mu =%4.4f  PRESS=%8.4f" %
-                  (sigma[k], muX[k], pressX[k]))
+                    (sigma[k], muX[k], pressX[k]))
         muOpt = muX[pressX.argmin()]
         sigOpt = sigma[pressX.argmin()]
-        print("Optimal Parameters: RBF Width =%4.6f, Regular Param =%4.6f" %
-              (sigOpt, muOpt))
+        print("\nOptimal Parameters: RBF Width =%4.6f, Regular Param =%4.6f" %
+                (sigOpt, muOpt))
         return sigOpt, muOpt
 
-    def fit(self, x, y):
+    def fit(self, x: np.array, y: np.array)-> None:
         self.x = x
         self.y = y
         self.kernel.width, self.mu = self._optimise(x,y)
         print("training with opt parameters...")
-        super(or_lssvm, self).fit(self.x, self.y)
+        ## using the grand parent, i.e. LSSVM
+        super(OptimallyRegularizedLSSVM, self).fit(self.x, self.y)
 
 
 
