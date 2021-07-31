@@ -12,7 +12,6 @@ class EvaluateInterface(ABC):
 
 @dataclass 
 class Linear(EvaluateInterface):
-
     def evaluate(self, x1: np.array, x2:np.array) -> np.array:
         return x2.dot(x1.T)
 
@@ -31,7 +30,7 @@ class RBF(EvaluateInterface):
     width:float = 0.5
     
     # Good starting point for the width
-    def set_iitial_width(self, trData: np.array) -> None:
+    def set_initial_width(self, trData: np.array) -> None:
         """Setting initial RBF width.
 
         The default value is the Euclidean norm of the standard
@@ -71,7 +70,7 @@ class RBF(EvaluateInterface):
 
 
 # Factory class
-class Kernels(EvaluateInterface):
+class Kernels:
     @staticmethod
     def generate_kernel(kerntype: str) -> EvaluateInterface:
         kerntype = kerntype.strip().lower()
@@ -86,13 +85,13 @@ class Kernels(EvaluateInterface):
 
 
 def main():
-    rbf = Kernels.generateKernel('rbf')
+    rbf = Kernels.generate_kernel('rbf')
     kern = rbf(1.0)
     print(kern)
-    lin = Kernels.generateKernel('linear')
+    lin = Kernels.generate_kernel('linear')
     kern = lin()
     print(kern)
-    pol = Kernels.generateKernel('polynomial')
+    pol = Kernels.generate_kernel('polynomial')
     kern = pol(2, 0.5)
     print(kern)
 
